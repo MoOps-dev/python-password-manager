@@ -1,6 +1,8 @@
 import os
+import random
 import pandas as pd
 from tkinter import END, messagebox
+from constants import LETTERS, NUMBERS, SYMBOLS
 
 
 class Manager:
@@ -8,6 +10,7 @@ class Manager:
         self.website = kwargs.get("wn_entry")
         self.user = kwargs.get("ue_entry")
         self.password = kwargs.get("pw_entry")
+        self.main = kwargs.get("main")
 
     def save_data(self):
         if self.validate():
@@ -32,22 +35,40 @@ class Manager:
             new_data.to_csv('book.csv', mode='a', header=False)
 
             self.clear()
+            messagebox.showinfo(title="Info", message="Credentials was saved to your book.")
 
     def validate(self):
         if self.website.get() == "":
-            messagebox.showerror(title="Field Required", message="The field: 'Website' is required")
+            messagebox.showerror(title="Field Required", message="The field: 'Website' is required.")
             return False
 
         if self.user.get() == "":
-            messagebox.showerror(title="Field Required", message="The field: 'Email/User' is required")
+            messagebox.showerror(title="Field Required", message="The field: 'Email/User' is required.")
             return False
 
         if self.password.get() == "":
-            messagebox.showerror(title="Field Required", message="The field: 'Password' is required")
+            messagebox.showerror(title="Field Required", message="The field: 'Password' is required.")
             return False
 
-        confirm = messagebox.askyesno(title="Save Confirmation", message=f"These are the info that will be saved to your book: \nWebsite name: {self.website.get()} \nEmail/User: {self.user.get()} \nPassword: {self.password.get()}")
+        confirm = messagebox.askyesno(title="Save Confirmation", message=f"Are you sure you want to save these credentials? \nWebsite name: {self.website.get()} \nEmail/User: {self.user.get()} \nPassword: {self.password.get()}")
         return confirm
+
+    def generate_pw(self):
+        password_letters = [random.choice(LETTERS) for _ in range(random.randint(8, 10))]
+        password_numbers = [random.choice(NUMBERS) for _ in range(random.randint(2, 4))]
+        password_symbols = [random.choice(SYMBOLS) for _ in range(random.randint(2, 4))]
+
+        raw_password = password_letters + password_numbers + password_symbols
+        random.shuffle(raw_password)
+
+        password = "".join(raw_password)
+
+        self.password.delete(0, END)
+        self.password.insert(0, password)
+        self.main.clipboard_clear()
+        self.main.clipboard_append(password)
+
+        messagebox.showinfo(title="Info", message="Password was copied to Clipboard.")
 
     def clear(self):
         self.website.delete(0, END)
