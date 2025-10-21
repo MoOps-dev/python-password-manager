@@ -2,6 +2,8 @@ import os
 import random
 import pandas as pd
 from tkinter import END, messagebox
+
+from book_class import Book
 from constants import LETTERS, NUMBERS, SYMBOLS
 
 
@@ -36,6 +38,8 @@ class Manager:
 
             self.clear()
             messagebox.showinfo(title="Info", message="Credentials was saved to your book.")
+            self.main.open_book()
+            self.main.open_book()
 
     def validate(self):
         if self.website.get() == "":
