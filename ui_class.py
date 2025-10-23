@@ -2,7 +2,6 @@ import os
 from tkinter import *
 from tkinter import ttk, messagebox
 from tkinter.ttk import Treeview
-import tkinter.font as tkfont
 import pandas as pd
 from constants import *
 
@@ -64,6 +63,9 @@ class MainScreen(Tk):
         self.canvas.focus()
 
     def open_book(self):
+        """Creates the book window and all its components as a child of the main screen"""
+
+        # if the book window isn't created yet, create it and its components
         if not self.book_window:
             self.book_window = Toplevel(self)
             self.book_window.title("Password Manager Book")
@@ -98,48 +100,46 @@ class MainScreen(Tk):
             style = ttk.Style()
             style.configure("Treeview", font=("Arial", 11))
 
-            if not os.path.isfile("book.csv"):
-                file = pd.DataFrame(columns=["id", "website", "username", "password"])
-                file.to_csv('book.csv', index=False)
-
-            df = pd.read_csv('book.csv', index_col=0)
-
-            for index, row in df.iterrows():
-                parent_id = self.bw_list.insert('', 'end', text=f'{index}. {row['website']}', values=([f"-{index}"]))
-                self.bw_list.insert(parent_id, 'end', text=f"User: {row['username']}", values=(["+"]))
-                self.bw_list.insert(parent_id, 'end', text=f"Password: {row['password']}", values=(["++"]))
-
-        else:
+            # update the treeview in the book window to populate it
+            self.update_book()
+        else: # book windows is already open close and destroy it
             self.book_window.destroy()
             self.destroy_child("")
 
     def move_child_with_parent(self, event):
+        """Binds the book window movement to the parent window 'MainScreen'."""
         if self.book_window is not None:
             x = self.winfo_x()
             y = self.winfo_y()
             self.book_window.geometry(f"+{x + 480}+{y + 0}")
 
     def on_select(self, event):
+        """Manages the selection of elements in the treeview"""
+
         selected_items = self.bw_list.selection()
         for item in selected_items:
             item_value = self.bw_list.item(item, 'value')
             item_text = self.bw_list.item(item, 'text')
 
+            # special case for the username values, copy it to clipboard once clicked
             if item_value[0] == "+":
                 self.clipboard_clear()
                 self.clipboard_append(item_text.replace("User: ",""))
                 messagebox.showinfo(title="Info", message=f"{item_text.replace("User: ","")} : was copied to Clipboard.")
+            # special case for the password values, copy it to clipboard once clicked
             elif item_value[0] == "++":
                 self.clipboard_clear()
                 self.clipboard_append(item_text.replace("Password: ",""))
                 messagebox.showinfo(title="Info", message=f"{item_text.replace("Password: ","")} : was copied to Clipboard.")
 
     def delete_from_book(self):
+        """Deletes the selected parent in the treeview and updates the book window"""
         selected_items = self.bw_list.selection()
         for item in selected_items:
             item_value = self.bw_list.item(item, 'value')
             item_text = self.bw_list.item(item, 'text')
 
+            # special case for the parent values, ask for deletion confirmation
             if item_value[0][0] == "-":
                 self.clipboard_clear()
                 self.clipboard_append(item_text.replace("User: ",""))
@@ -150,9 +150,22 @@ class MainScreen(Tk):
                     df.drop(index, inplace=True)
                     df.to_csv('book.csv', index=True)
                     messagebox.showinfo(title="Info", message=f"{item_text.replace("Password: ", "")} : has been Deleted.")
-                    self.open_book()
-                    self.open_book()
+                    self.update_book()
+
+    def update_book(self):
+        """Populates the treeview with data from book.csv"""
+        for item in self.bw_list.get_children():
+            self.bw_list.delete(item)
+
+        df = pd.read_csv('book.csv', index_col=0)
+
+        for index, row in df.iterrows():
+            # set each record from the data file to a parent value and credentials under it in the tree
+            parent_id = self.bw_list.insert('', 'end', text=f'{index}. {row['website']}', values=([f"-{index}"]))
+            self.bw_list.insert(parent_id, 'end', text=f"User: {row['username']}", values=(["+"]))
+            self.bw_list.insert(parent_id, 'end', text=f"Password: {row['password']}", values=(["++"]))
 
     def destroy_child(self, event):
+        """Destroys the book window"""
         if self.book_window:
             self.book_window = None
