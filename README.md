@@ -1,15 +1,16 @@
 # Python Password Manager
 Password manager is a tool to save user credentials for various websites and store them in an organized way easy to view
-and manage by the user. It also help the user generate a strong password so your credentials are always strong and secure.
+and manage by the user. It also helps the user generate a strong password so your credentials are always strong and secure.
 
 ## Language practices within this project:
-- Tkinter library
+- Tkinter library   
 - GUI with Tkinter
 - OOP
 - Keyword arguments with '**kwargs'
 - Lists, dictionaries, loops
 - Random password generation
 - List comprehension:
+
     ```` python
         password_letters = [random.choice(LETTERS) for _ in range(random.randint(8, 10))]
         password_numbers = [random.choice(NUMBERS) for _ in range(random.randint(2, 4))]
@@ -17,12 +18,14 @@ and manage by the user. It also help the user generate a strong password so your
     ````
 - Working with CSV files using Pandas library:
   - Creating a CSV file:
+  
     ```` python
         if not os.path.isfile("book.csv"):
             file = pd.DataFrame(columns=["id", "website", "username", "password"])
             file.to_csv('book.csv', index=False)
     ````
   - Reading the data from the CSV file:
+  
     ```` python
         df = pd.read_csv('book.csv', index_col=0)
 
@@ -33,6 +36,7 @@ and manage by the user. It also help the user generate a strong password so your
             self.bw_list.insert(parent_id, 'end', text=f"Password: {row['password']}", values=(["++"]))
     ````
   - Saving new data to the CSV file:
+  
     ```` python
         data_strct = {
                 "website" : [self.website.get()],
@@ -62,4 +66,6 @@ and manage by the user. It also help the user generate a strong password so your
 
 ## App Preview:
 
-![Python Password Manager](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExejczOXlnOWZrNWk2eWFoZm85Zm80cmhxcDlkYmQwbGlqOHFpbGQ5byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uElZsMX5l4FVeZ8tDj/giphy.gif)
+![Python Password Manager](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjk1cXVsMWw4bnRkaHphNGRwMzhpcmk5bmVwbWRuN3N0cjh6dXVzNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/hhQzdvbyd3sT5fEirI/giphy.gif)
+
+![Python Password Manager](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGRyazNxb2p6YzBjYWJtZmRkMWU3YWVvYjNsaTd5aWZ6aHNoanhuaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jq2EtwQJn9Qa0PaKxI/giphy.gif)

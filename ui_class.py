@@ -74,8 +74,7 @@ class MainScreen(Tk):
             self.book_window.bind("<Destroy>", self.destroy_child)
             x = self.winfo_x()
             y = self.winfo_y()
-            if self.book_window is not None:
-                self.book_window.geometry(f"400x400+{x + 480}+{y + 0}")
+            self.book_window.geometry(f"400x400+{x + 480}+{y + 0}")
 
             self.delete_button = Button(self.book_window, text="Delete", width=15, command=self.delete_from_book)
             self.delete_button.pack(side="bottom", pady=10)
@@ -154,16 +153,18 @@ class MainScreen(Tk):
 
     def update_book(self):
         """Populates the treeview with data from book.csv"""
-        for item in self.bw_list.get_children():
-            self.bw_list.delete(item)
 
-        df = pd.read_csv('book.csv', index_col=0)
+        if self.book_window is not None:
+            for item in self.bw_list.get_children():
+                self.bw_list.delete(item)
 
-        for index, row in df.iterrows():
-            # set each record from the data file to a parent value and credentials under it in the tree
-            parent_id = self.bw_list.insert('', 'end', text=f'{index}. {row['website']}', values=([f"-{index}"]))
-            self.bw_list.insert(parent_id, 'end', text=f"User: {row['username']}", values=(["+"]))
-            self.bw_list.insert(parent_id, 'end', text=f"Password: {row['password']}", values=(["++"]))
+            df = pd.read_csv('book.csv', index_col=0)
+
+            for index, row in df.iterrows():
+                # set each record from the data file to a parent value and credentials under it in the tree
+                parent_id = self.bw_list.insert('', 'end', text=f'{index}. {row['website']}', values=([f"-{index}"]))
+                self.bw_list.insert(parent_id, 'end', text=f"User: {row['username']}", values=(["+"]))
+                self.bw_list.insert(parent_id, 'end', text=f"Password: {row['password']}", values=(["++"]))
 
     def destroy_child(self, event):
         """Destroys the book window"""
